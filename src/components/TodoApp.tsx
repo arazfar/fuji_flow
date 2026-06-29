@@ -83,7 +83,7 @@ const statusCopy: Record<
 > = {
   idle: {
     label: "Ready",
-    className: "border-stone-200 bg-stone-100 text-stone-700",
+    className: "border-[#ead8c8] bg-[#f8efe5] text-[#6f5a4d]",
     icon: Clock3,
   },
   gathering_context: {
@@ -93,32 +93,32 @@ const statusCopy: Record<
   },
   planning: {
     label: "Planning",
-    className: "border-amber-200 bg-amber-50 text-amber-800",
+    className: "border-amber-200 bg-[#fff0cf] text-amber-800",
     icon: Pencil,
   },
   awaiting_approval: {
     label: "Approval",
-    className: "border-orange-200 bg-orange-50 text-orange-800",
+    className: "border-amber-300 bg-[#fff0cf] text-amber-900",
     icon: ShieldCheck,
   },
   executing: {
     label: "Running",
-    className: "border-sky-200 bg-sky-50 text-sky-800",
+    className: "border-cyan-200 bg-cyan-50 text-cyan-800",
     icon: Loader2,
   },
   completed: {
     label: "Done",
-    className: "border-emerald-200 bg-emerald-50 text-emerald-800",
+    className: "border-[#c6d8c8] bg-[#edf6ef] text-[#42624a]",
     icon: CheckCircle2,
   },
   needs_user_action: {
     label: "Action",
-    className: "border-rose-200 bg-rose-50 text-rose-800",
+    className: "border-[#f1c5ba] bg-[#fff1ee] text-[#9f3f31]",
     icon: AlertCircle,
   },
   error: {
     label: "Error",
-    className: "border-red-200 bg-red-50 text-red-800",
+    className: "border-[#f1c5ba] bg-[#fff1ee] text-[#9f3f31]",
     icon: AlertCircle,
   },
 };
@@ -313,22 +313,22 @@ export function TodoApp() {
     ) ?? false;
 
   return (
-    <main className="min-h-screen bg-[#f7f4ef] text-stone-950">
+    <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 py-4 sm:px-6 lg:px-8">
-        <header className="flex flex-col gap-4 border-b border-stone-200 pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <header className="flex flex-col gap-4 border-b border-[#ead8c8] pb-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-stone-950 text-white shadow-sm">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-coral text-white shadow-sm shadow-[#c85f4b]/20">
               <ClipboardCheck className="h-5 w-5" aria-hidden="true" />
             </div>
             <div>
               <h1 className="text-2xl font-semibold tracking-normal">Fuji Flow</h1>
-              <p className="text-sm text-stone-600">
+              <p className="text-sm text-[#6f5a4d]">
                 {counts.active} active / {counts.done} done
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-3 overflow-hidden rounded-lg border border-stone-200 bg-white text-center shadow-sm sm:min-w-72">
+          <div className="grid grid-cols-3 overflow-hidden rounded-lg border border-[#ead8c8] bg-surface text-center shadow-sm shadow-[#8c5d45]/5 sm:min-w-72">
             <Metric label="Tasks" value={counts.total} />
             <Metric label="Active" value={counts.active} />
             <Metric label="Done" value={counts.done} />
@@ -337,7 +337,7 @@ export function TodoApp() {
 
         <div className="grid flex-1 gap-5 py-5 lg:grid-cols-[380px_minmax(0,1fr)]">
           <section className="flex min-h-0 flex-col gap-4">
-            <div className="rounded-lg border border-stone-200 bg-white p-3 shadow-sm">
+            <div className="rounded-lg border border-[#ead8c8] bg-surface p-3 shadow-sm shadow-[#8c5d45]/5">
               <div className="flex gap-2">
                 <input
                   value={newTitle}
@@ -346,13 +346,13 @@ export function TodoApp() {
                     if (event.key === "Enter") addTask();
                   }}
                   placeholder="New task"
-                  className="h-11 min-w-0 flex-1 rounded-md border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition focus:border-stone-400 focus:bg-white"
+                  className="h-11 min-w-0 flex-1 rounded-md border border-[#ead8c8] bg-[#fff8f1] px-3 text-sm text-foreground outline-none transition placeholder:text-[#a58b7a] focus:border-coral focus:bg-white focus:ring-2 focus:ring-[#c85f4b]/15"
                 />
                 <button
                   type="button"
                   onClick={addTask}
                   disabled={!newTitle.trim()}
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-stone-950 text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:bg-stone-300"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-coral text-white shadow-sm shadow-[#c85f4b]/20 transition hover:bg-coral-strong focus:outline-none focus:ring-2 focus:ring-[#c85f4b]/25 disabled:cursor-not-allowed disabled:bg-[#d8b8aa] disabled:shadow-none"
                   aria-label="Add task"
                   title="Add task"
                 >
@@ -363,7 +363,7 @@ export function TodoApp() {
                 value={newNotes}
                 onChange={(event) => setNewNotes(event.target.value)}
                 placeholder="Notes"
-                className="mt-2 min-h-20 w-full resize-none rounded-md border border-stone-200 bg-stone-50 px-3 py-2 text-sm outline-none transition focus:border-stone-400 focus:bg-white"
+                className="mt-2 min-h-20 w-full resize-none rounded-md border border-[#ead8c8] bg-[#fff8f1] px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-[#a58b7a] focus:border-coral focus:bg-white focus:ring-2 focus:ring-[#c85f4b]/15"
               />
             </div>
 
@@ -377,17 +377,17 @@ export function TodoApp() {
                     key={todo.id}
                     type="button"
                     onClick={() => setSelectedId(todo.id)}
-                    className={`group grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-lg border bg-white p-3 text-left shadow-sm transition hover:border-stone-300 hover:shadow-md ${
+                    className={`group grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-lg border bg-surface p-3 text-left shadow-sm shadow-[#8c5d45]/5 transition hover:border-[#ddbca9] hover:shadow-md hover:shadow-[#8c5d45]/10 focus:outline-none focus:ring-2 focus:ring-[#c85f4b]/20 ${
                       selected
-                        ? "border-stone-900 ring-2 ring-stone-900/10"
-                        : "border-stone-200"
+                        ? "border-coral bg-white ring-2 ring-[#c85f4b]/15"
+                        : "border-[#ead8c8]"
                     }`}
                   >
                     <span
                       className={`flex h-6 w-6 items-center justify-center rounded-md border ${
                         todo.completed
-                          ? "border-emerald-500 bg-emerald-500 text-white"
-                          : "border-stone-300 bg-stone-50 text-transparent"
+                          ? "border-sage bg-sage text-white"
+                          : "border-[#dcc7b7] bg-[#fff8f1] text-transparent"
                       }`}
                     >
                       <Check className="h-4 w-4" aria-hidden="true" />
@@ -395,7 +395,7 @@ export function TodoApp() {
                     <span className="min-w-0">
                       <span
                         className={`block truncate text-sm font-medium ${
-                          todo.completed ? "text-stone-500 line-through" : "text-stone-950"
+                          todo.completed ? "text-[#8a7668] line-through" : "text-foreground"
                         }`}
                       >
                         {todo.title}
@@ -403,14 +403,14 @@ export function TodoApp() {
                       <span className="mt-2 flex flex-wrap items-center gap-2">
                         {run ? <StatusPill status={run.status} /> : null}
                         {todo.notes ? (
-                          <span className="truncate text-xs text-stone-500">
+                          <span className="truncate text-xs text-[#806b5e]">
                             {todo.notes}
                           </span>
                         ) : null}
                       </span>
                     </span>
                     <ChevronRight
-                      className="h-4 w-4 text-stone-400 transition group-hover:text-stone-700"
+                      className="h-4 w-4 text-[#b69987] transition group-hover:text-coral"
                       aria-hidden="true"
                     />
                   </button>
@@ -419,13 +419,13 @@ export function TodoApp() {
             </div>
           </section>
 
-          <section className="min-h-[620px] overflow-hidden rounded-lg border border-stone-200 bg-white shadow-sm">
+          <section className="min-h-[620px] overflow-hidden rounded-lg border border-[#ead8c8] bg-surface shadow-[0_18px_50px_rgba(117,74,51,0.08)]">
             {selectedTodo ? (
               <div className="grid h-full lg:grid-cols-[minmax(0,0.9fr)_minmax(420px,1.1fr)]">
-                <div className="border-b border-stone-200 p-5 lg:border-b-0 lg:border-r">
+                <div className="border-b border-[#ead8c8] p-5 lg:border-b-0 lg:border-r">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-xs font-semibold uppercase tracking-widest text-stone-500">
+                      <p className="text-xs font-semibold uppercase tracking-widest text-[#8a7668]">
                         Task
                       </p>
                       <textarea
@@ -438,7 +438,7 @@ export function TodoApp() {
                           )
                         }
                         rows={2}
-                        className="mt-2 min-h-16 w-full resize-none rounded-md border border-transparent bg-transparent text-xl font-semibold leading-7 outline-none transition focus:border-stone-200 focus:bg-stone-50 focus:px-2 focus:py-1"
+                        className="mt-2 min-h-16 w-full resize-none rounded-md border border-transparent bg-transparent text-xl font-semibold leading-7 text-foreground outline-none transition focus:border-[#ead8c8] focus:bg-[#fff8f1] focus:px-2 focus:py-1 focus:ring-2 focus:ring-[#c85f4b]/10"
                       />
                     </div>
                     <div className="flex items-center gap-2">
@@ -449,8 +449,8 @@ export function TodoApp() {
                         }
                         className={`flex h-10 w-10 items-center justify-center rounded-md border transition ${
                           selectedTodo.completed
-                            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                            : "border-stone-200 bg-white text-stone-700 hover:border-emerald-300 hover:text-emerald-700"
+                            ? "border-[#c6d8c8] bg-[#edf6ef] text-[#42624a]"
+                            : "border-[#ead8c8] bg-white text-[#6f5a4d] hover:border-[#c6d8c8] hover:text-[#42624a]"
                         }`}
                         aria-label="Toggle complete"
                         title="Toggle complete"
@@ -460,7 +460,7 @@ export function TodoApp() {
                       <button
                         type="button"
                         onClick={() => removeTodo(selectedTodo)}
-                        className="flex h-10 w-10 items-center justify-center rounded-md border border-stone-200 bg-white text-stone-500 transition hover:border-red-200 hover:text-red-600"
+                        className="flex h-10 w-10 items-center justify-center rounded-md border border-[#ead8c8] bg-white text-[#8a7668] transition hover:border-[#f1c5ba] hover:text-[#9f3f31] focus:outline-none focus:ring-2 focus:ring-[#c85f4b]/15"
                         aria-label="Delete task"
                         title="Delete task"
                       >
@@ -479,19 +479,19 @@ export function TodoApp() {
                       )
                     }
                     placeholder="Notes"
-                    className="mt-5 min-h-36 w-full resize-none rounded-lg border border-stone-200 bg-stone-50 px-3 py-3 text-sm leading-6 text-stone-700 outline-none transition focus:border-stone-400 focus:bg-white"
+                    className="mt-5 min-h-36 w-full resize-none rounded-lg border border-[#ead8c8] bg-[#fff8f1] px-3 py-3 text-sm leading-6 text-[#5f4d43] outline-none transition placeholder:text-[#a58b7a] focus:border-coral focus:bg-white focus:ring-2 focus:ring-[#c85f4b]/15"
                   />
 
                   <div className="mt-5 flex flex-wrap gap-2">
                     {selectedRun ? (
                       <StatusPill status={selectedRun.status} />
                     ) : (
-                      <span className="rounded-full border border-stone-200 bg-stone-50 px-3 py-1 text-xs font-medium text-stone-600">
+                      <span className="rounded-full border border-[#ead8c8] bg-[#fff8f1] px-3 py-1 text-xs font-medium text-[#6f5a4d]">
                         No run
                       </span>
                     )}
                     {selectedRun ? (
-                      <span className="rounded-full border border-stone-200 bg-stone-50 px-3 py-1 text-xs font-medium text-stone-600">
+                      <span className="rounded-full border border-[#ead8c8] bg-[#fff8f1] px-3 py-1 text-xs font-medium text-[#6f5a4d]">
                         {selectedRun.workflowKind === "provider_lookup"
                           ? "Provider lookup"
                           : selectedRun.mode === "live"
@@ -500,7 +500,7 @@ export function TodoApp() {
                       </span>
                     ) : null}
                     {selectedTodo.completed ? (
-                      <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
+                      <span className="rounded-full border border-[#c6d8c8] bg-[#edf6ef] px-3 py-1 text-xs font-medium text-[#42624a]">
                         Completed
                       </span>
                     ) : null}
@@ -514,7 +514,7 @@ export function TodoApp() {
                             type="button"
                             onClick={() => launchAgent(selectedTodo, "provider_lookup")}
                             disabled={busyAction === "start"}
-                            className="inline-flex h-11 items-center gap-2 rounded-md bg-teal-700 px-4 text-sm font-medium text-white transition hover:bg-teal-800 disabled:cursor-wait disabled:bg-stone-400"
+                            className="inline-flex h-11 items-center gap-2 rounded-md bg-sage px-4 text-sm font-medium text-white shadow-sm shadow-[#5f7f68]/20 transition hover:bg-[#4d6c56] focus:outline-none focus:ring-2 focus:ring-[#5f7f68]/25 disabled:cursor-wait disabled:bg-[#b9c5b8] disabled:shadow-none"
                           >
                             {busyAction === "start" ? (
                               <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -528,7 +528,7 @@ export function TodoApp() {
                           type="button"
                           onClick={() => launchAgent(selectedTodo)}
                           disabled={busyAction === "start"}
-                          className="inline-flex h-11 items-center gap-2 rounded-md bg-stone-950 px-4 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-wait disabled:bg-stone-400"
+                          className="inline-flex h-11 items-center gap-2 rounded-md bg-coral px-4 text-sm font-medium text-white shadow-sm shadow-[#c85f4b]/20 transition hover:bg-coral-strong focus:outline-none focus:ring-2 focus:ring-[#c85f4b]/25 disabled:cursor-wait disabled:bg-[#d8b8aa] disabled:shadow-none"
                         >
                           {busyAction === "start" ? (
                             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -544,7 +544,7 @@ export function TodoApp() {
                   </div>
 
                   {error ? (
-                    <div className="mt-5 rounded-lg border border-red-200 bg-red-50 px-3 py-3 text-sm text-red-700">
+                    <div className="mt-5 rounded-lg border border-[#f1c5ba] bg-red-soft px-3 py-3 text-sm text-[#9f3f31]">
                       {error}
                     </div>
                   ) : null}
@@ -577,7 +577,7 @@ export function TodoApp() {
                 />
               </div>
             ) : (
-              <div className="flex h-full items-center justify-center p-8 text-stone-500">
+              <div className="flex h-full items-center justify-center p-8 text-[#8a7668]">
                 No task selected
               </div>
             )}
@@ -591,9 +591,9 @@ export function TodoApp() {
 
 function Metric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="border-r border-stone-200 px-4 py-3 last:border-r-0">
+    <div className="border-r border-[#ead8c8] px-4 py-3 last:border-r-0">
       <div className="text-lg font-semibold">{value}</div>
-      <div className="text-xs text-stone-500">{label}</div>
+      <div className="text-xs text-[#8a7668]">{label}</div>
     </div>
   );
 }
@@ -604,7 +604,7 @@ function StatusPill({ status }: { status: AgentRunStatus }) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium ${meta.className}`}
+      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium shadow-sm shadow-white/50 ${meta.className}`}
     >
       <Icon
         className={`h-3.5 w-3.5 ${status === "executing" ? "animate-spin" : ""}`}
@@ -618,18 +618,18 @@ function StatusPill({ status }: { status: AgentRunStatus }) {
 function Timeline({ run }: { run: AgentRunView }) {
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-widest text-stone-500">
+      <p className="text-xs font-semibold uppercase tracking-widest text-[#8a7668]">
         Timeline
       </p>
       <ol className="mt-3 space-y-2">
         {run.timeline.map((event) => (
           <li key={event.id} className="grid grid-cols-[auto_minmax(0,1fr)] gap-2">
-            <span className="mt-1.5 h-2 w-2 rounded-full bg-stone-400" />
+            <span className="mt-1.5 h-2 w-2 rounded-full bg-coral" />
             <span className="min-w-0">
-              <span className="block text-sm font-medium text-stone-900">
+              <span className="block text-sm font-medium text-foreground">
                 {event.title}
               </span>
-              <span className="block text-xs leading-5 text-stone-500">
+              <span className="block text-xs leading-5 text-[#806b5e]">
                 {event.body}
               </span>
             </span>
@@ -661,10 +661,10 @@ function AgentPanel({
 }) {
   if (!run) {
     return (
-      <div className="flex h-full items-center justify-center bg-stone-50 p-8 text-center">
+      <div className="flex h-full items-center justify-center bg-[#fff8f1] p-8 text-center">
         <div>
-          <Sparkles className="mx-auto h-8 w-8 text-stone-400" aria-hidden="true" />
-          <p className="mt-3 text-sm font-medium text-stone-700">Agent idle</p>
+          <Sparkles className="mx-auto h-8 w-8 text-coral" aria-hidden="true" />
+          <p className="mt-3 text-sm font-medium text-[#6f5a4d]">Agent idle</p>
         </div>
       </div>
     );
@@ -673,14 +673,14 @@ function AgentPanel({
   const hasOutcome = Boolean(run.outcome);
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-stone-50">
-      <div className="border-b border-stone-200 bg-white px-5 py-4">
+    <div className="flex h-full min-h-0 flex-col bg-[#fff8f1]">
+      <div className="border-b border-[#ead8c8] bg-surface px-5 py-4">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-stone-500">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#8a7668]">
               Agent
             </p>
-            <h2 className="mt-1 text-lg font-semibold text-stone-950">
+            <h2 className="mt-1 text-lg font-semibold text-foreground">
               {statusCopy[run.status].label}
             </h2>
           </div>
@@ -715,14 +715,14 @@ function AgentPanel({
         ) : null}
 
         {run.error ? (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <div className="rounded-lg border border-[#f1c5ba] bg-red-soft p-4 text-sm text-[#9f3f31]">
             {run.error}
           </div>
         ) : null}
 
         {run.status === "planning" || run.status === "executing" ? (
-          <div className="flex items-center gap-3 rounded-lg border border-stone-200 bg-white p-4 text-sm text-stone-600">
-            <Loader2 className="h-4 w-4 animate-spin text-stone-900" aria-hidden="true" />
+          <div className="flex items-center gap-3 rounded-lg border border-[#ead8c8] bg-surface p-4 text-sm text-[#6f5a4d] shadow-sm shadow-[#8c5d45]/5">
+            <Loader2 className="h-4 w-4 animate-spin text-coral" aria-hidden="true" />
             Working
           </div>
         ) : null}
@@ -738,14 +738,14 @@ function LatestUpdate({ run }: { run: AgentRunView }) {
     : "Ready to start.";
 
   return (
-    <div className="mb-5 rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
+    <div className="mb-5 rounded-lg border border-[#ead8c8] bg-surface p-4 shadow-sm shadow-[#8c5d45]/5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-widest text-stone-500">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[#8a7668]">
           Latest update
         </p>
         <StatusPill status={run.status} />
       </div>
-      <p className="mt-2 text-sm font-medium leading-6 text-stone-900">
+      <p className="mt-2 text-sm font-medium leading-6 text-foreground">
         {updateText}
       </p>
     </div>
@@ -768,16 +768,16 @@ function ContextForm({
   onSubmit: () => void;
 }) {
   return (
-    <div className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
-      <h3 className="text-sm font-semibold text-stone-950">Context</h3>
+    <div className="rounded-lg border border-[#ead8c8] bg-surface p-4 shadow-sm shadow-[#8c5d45]/5">
+      <h3 className="text-sm font-semibold text-foreground">Context</h3>
       <div className="mt-4 space-y-4">
         {questions.map((question) => (
           <label key={question.id} className="block">
-            <span className="text-sm font-medium text-stone-800">
+            <span className="text-sm font-medium text-[#4d3d35]">
               {question.label}
             </span>
             {question.helpText ? (
-              <span className="mt-1 block text-xs leading-5 text-stone-500">
+              <span className="mt-1 block text-xs leading-5 text-[#806b5e]">
                 {question.helpText}
               </span>
             ) : null}
@@ -786,7 +786,7 @@ function ContextForm({
                 value={answers[question.id] ?? ""}
                 onChange={(event) => setAnswer(question.id, event.target.value)}
                 placeholder={question.placeholder}
-                className="mt-2 min-h-24 w-full resize-none rounded-md border border-stone-200 bg-stone-50 px-3 py-2 text-sm outline-none transition focus:border-stone-400 focus:bg-white"
+                className="mt-2 min-h-24 w-full resize-none rounded-md border border-[#ead8c8] bg-[#fff8f1] px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-[#a58b7a] focus:border-coral focus:bg-white focus:ring-2 focus:ring-[#c85f4b]/15"
               />
             ) : (
               <input
@@ -794,7 +794,7 @@ function ContextForm({
                 type={question.type === "date" ? "text" : question.type}
                 onChange={(event) => setAnswer(question.id, event.target.value)}
                 placeholder={question.placeholder}
-                className="mt-2 h-10 w-full rounded-md border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition focus:border-stone-400 focus:bg-white"
+                className="mt-2 h-10 w-full rounded-md border border-[#ead8c8] bg-[#fff8f1] px-3 text-sm text-foreground outline-none transition placeholder:text-[#a58b7a] focus:border-coral focus:bg-white focus:ring-2 focus:ring-[#c85f4b]/15"
               />
             )}
           </label>
@@ -804,7 +804,7 @@ function ContextForm({
         type="button"
         onClick={onSubmit}
         disabled={!canSubmit || disabled}
-        className="mt-4 inline-flex h-10 items-center gap-2 rounded-md bg-stone-950 px-4 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:bg-stone-300"
+        className="mt-4 inline-flex h-10 items-center gap-2 rounded-md bg-coral px-4 text-sm font-medium text-white shadow-sm shadow-[#c85f4b]/20 transition hover:bg-coral-strong focus:outline-none focus:ring-2 focus:ring-[#c85f4b]/25 disabled:cursor-not-allowed disabled:bg-[#d8b8aa] disabled:shadow-none"
       >
         {disabled ? (
           <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -833,18 +833,18 @@ function PlanPanel({
   if (!run.plan) return null;
 
   return (
-    <div className="mb-5 rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
+    <div className="mb-5 rounded-lg border border-[#ead8c8] bg-surface p-4 shadow-sm shadow-[#8c5d45]/5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="text-sm font-semibold text-stone-950">Plan</h3>
+          <h3 className="text-sm font-semibold text-foreground">Plan</h3>
           {supporting ? (
-            <p className="mt-1 text-xs font-medium uppercase tracking-widest text-stone-500">
+            <p className="mt-1 text-xs font-medium uppercase tracking-widest text-[#8a7668]">
               Supporting context
             </p>
           ) : null}
-          <p className="mt-1 text-sm leading-6 text-stone-600">{run.plan.summary}</p>
+          <p className="mt-1 text-sm leading-6 text-[#5f4d43]">{run.plan.summary}</p>
         </div>
-        <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-xs font-medium text-stone-700">
+        <span className="rounded-full border border-[#ead8c8] bg-[#fff8f1] px-2.5 py-1 text-xs font-medium text-[#6f5a4d]">
           {run.plan.estimatedEffort}
         </span>
       </div>
@@ -852,19 +852,19 @@ function PlanPanel({
       <ol className="mt-4 space-y-3">
         {run.plan.steps.map((step, index) => (
           <li key={step.id} className="grid grid-cols-[28px_minmax(0,1fr)] gap-3">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-stone-100 text-xs font-semibold text-stone-700">
+            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[#f8efe5] text-xs font-semibold text-coral">
               {index + 1}
             </span>
             <span>
               <span className="flex flex-wrap items-center gap-2">
-                <span className="text-sm font-medium text-stone-900">
+                <span className="text-sm font-medium text-foreground">
                   {step.title}
                 </span>
-                <span className="rounded-full bg-stone-100 px-2 py-0.5 text-[11px] font-medium uppercase text-stone-500">
+                <span className="rounded-full bg-[#edf6ef] px-2 py-0.5 text-[11px] font-medium uppercase text-[#42624a]">
                   {step.owner}
                 </span>
               </span>
-              <span className="mt-1 block text-sm leading-6 text-stone-600">
+              <span className="mt-1 block text-sm leading-6 text-[#5f4d43]">
                 {step.detail}
               </span>
             </span>
@@ -873,10 +873,10 @@ function PlanPanel({
       </ol>
 
       {run.status === "awaiting_approval" ? (
-        <div className="mt-5 rounded-lg border border-orange-200 bg-orange-50 p-3">
+        <div className="mt-5 rounded-lg border border-amber-300 bg-amber-soft p-3">
           <div className="flex items-start gap-3">
-            <ShieldCheck className="mt-0.5 h-5 w-5 text-orange-700" aria-hidden="true" />
-            <p className="text-sm leading-6 text-orange-900">
+            <ShieldCheck className="mt-0.5 h-5 w-5 text-amber-800" aria-hidden="true" />
+            <p className="text-sm leading-6 text-amber-950">
               {run.approvalRequest?.statement}
             </p>
           </div>
@@ -885,7 +885,7 @@ function PlanPanel({
               type="button"
               onClick={() => approveRun(run)}
               disabled={busyAction === "approve"}
-              className="inline-flex h-10 items-center gap-2 rounded-md bg-stone-950 px-4 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-wait disabled:bg-stone-400"
+              className="inline-flex h-10 items-center gap-2 rounded-md bg-coral px-4 text-sm font-medium text-white shadow-sm shadow-[#c85f4b]/20 transition hover:bg-coral-strong focus:outline-none focus:ring-2 focus:ring-[#c85f4b]/25 disabled:cursor-wait disabled:bg-[#d8b8aa] disabled:shadow-none"
             >
               {busyAction === "approve" ? (
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -898,7 +898,7 @@ function PlanPanel({
               type="button"
               onClick={() => rejectRun(run)}
               disabled={busyAction === "reject"}
-              className="inline-flex h-10 items-center gap-2 rounded-md border border-stone-300 bg-white px-4 text-sm font-medium text-stone-700 transition hover:border-red-200 hover:text-red-700 disabled:cursor-wait disabled:text-stone-400"
+              className="inline-flex h-10 items-center gap-2 rounded-md border border-[#ead8c8] bg-white px-4 text-sm font-medium text-[#6f5a4d] transition hover:border-[#f1c5ba] hover:text-[#9f3f31] focus:outline-none focus:ring-2 focus:ring-[#c85f4b]/15 disabled:cursor-wait disabled:text-[#b8a497]"
             >
               <X className="h-4 w-4" aria-hidden="true" />
               Reject
@@ -912,30 +912,30 @@ function PlanPanel({
 
 function OutcomePanel({ outcome }: { outcome: TaskOutcome }) {
   return (
-    <div className="mb-5 rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
+    <div className="mb-5 rounded-lg border border-[#ead8c8] bg-surface p-4 shadow-sm shadow-[#8c5d45]/5">
       <div className="flex items-start gap-3">
         {outcome.status === "completed" ? (
-          <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-600" aria-hidden="true" />
+          <CheckCircle2 className="mt-0.5 h-5 w-5 text-sage" aria-hidden="true" />
         ) : (
-          <AlertCircle className="mt-0.5 h-5 w-5 text-rose-600" aria-hidden="true" />
+          <AlertCircle className="mt-0.5 h-5 w-5 text-[#9f3f31]" aria-hidden="true" />
         )}
         <div>
-          <h3 className="text-sm font-semibold text-stone-950">
+          <h3 className="text-sm font-semibold text-foreground">
             {outcome.status === "completed" ? "Result" : "Action needed"}
           </h3>
-          <p className="mt-1 text-sm leading-6 text-stone-600">{outcome.summary}</p>
+          <p className="mt-1 text-sm leading-6 text-[#5f4d43]">{outcome.summary}</p>
         </div>
       </div>
 
       {outcome.completedActions.length ? (
         <div className="mt-4">
-          <p className="text-xs font-semibold uppercase tracking-widest text-stone-500">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#8a7668]">
             Completed
           </p>
           <ul className="mt-2 space-y-2">
             {outcome.completedActions.map((action) => (
-              <li key={action} className="flex gap-2 text-sm text-stone-700">
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+              <li key={action} className="flex gap-2 text-sm text-[#5f4d43]">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-sage" />
                 <span>{action}</span>
               </li>
             ))}
@@ -945,44 +945,44 @@ function OutcomePanel({ outcome }: { outcome: TaskOutcome }) {
 
       {outcome.nextSteps.length ? (
         <div className="mt-4">
-          <p className="text-xs font-semibold uppercase tracking-widest text-stone-500">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#8a7668]">
             Actions
           </p>
           <div className="mt-2 space-y-3">
             {outcome.nextSteps.map((step) => (
               <div
                 key={`${step.title}-${step.detail}`}
-                className="rounded-lg border border-stone-200 bg-stone-50 p-3"
+                className="rounded-lg border border-[#ead8c8] bg-[#fff8f1] p-3"
               >
-                <p className="text-sm font-medium text-stone-900">{step.title}</p>
-                <p className="mt-1 text-sm leading-6 text-stone-600">{step.detail}</p>
+                <p className="text-sm font-medium text-foreground">{step.title}</p>
+                <p className="mt-1 text-sm leading-6 text-[#5f4d43]">{step.detail}</p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {step.link ? (
                     <a
                       href={step.link}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1 rounded-full border border-stone-200 bg-white px-2.5 py-1 text-xs font-medium text-stone-700 hover:border-stone-400"
+                      className="inline-flex items-center gap-1 rounded-full border border-[#ead8c8] bg-white px-2.5 py-1 text-xs font-medium text-[#6f5a4d] transition hover:border-coral hover:text-coral"
                     >
                       <LinkIcon className="h-3.5 w-3.5" aria-hidden="true" />
                       Link
                     </a>
                   ) : null}
                   {step.phone ? (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-stone-200 bg-white px-2.5 py-1 text-xs font-medium text-stone-700">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-[#ead8c8] bg-white px-2.5 py-1 text-xs font-medium text-[#6f5a4d]">
                       <Phone className="h-3.5 w-3.5" aria-hidden="true" />
                       {step.phone}
                     </span>
                   ) : null}
                   {step.deadline ? (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-stone-200 bg-white px-2.5 py-1 text-xs font-medium text-stone-700">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-[#ead8c8] bg-white px-2.5 py-1 text-xs font-medium text-[#6f5a4d]">
                       <Clock3 className="h-3.5 w-3.5" aria-hidden="true" />
                       {step.deadline}
                     </span>
                   ) : null}
                 </div>
                 {step.materials?.length ? (
-                  <p className="mt-2 text-xs leading-5 text-stone-500">
+                  <p className="mt-2 text-xs leading-5 text-[#806b5e]">
                     Materials: {step.materials.join(", ")}
                   </p>
                 ) : null}
@@ -994,7 +994,7 @@ function OutcomePanel({ outcome }: { outcome: TaskOutcome }) {
 
       {outcome.citations.length ? (
         <div className="mt-4">
-          <p className="text-xs font-semibold uppercase tracking-widest text-stone-500">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#8a7668]">
             Links
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -1004,7 +1004,7 @@ function OutcomePanel({ outcome }: { outcome: TaskOutcome }) {
                 href={citation.url}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1 rounded-full border border-stone-200 bg-stone-50 px-3 py-1 text-xs font-medium text-stone-700 transition hover:border-stone-400"
+                className="inline-flex items-center gap-1 rounded-full border border-[#ead8c8] bg-[#fff8f1] px-3 py-1 text-xs font-medium text-[#6f5a4d] transition hover:border-coral hover:text-coral"
               >
                 <LinkIcon className="h-3.5 w-3.5" aria-hidden="true" />
                 {citation.title}

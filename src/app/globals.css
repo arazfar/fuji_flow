@@ -1,13 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f4ef;
-  --foreground: #1c1917;
+  --background: #fff8f1;
+  --foreground: #2a211d;
+  --surface: #fffdf9;
+  --surface-muted: #f8efe5;
+  --border-soft: #ead8c8;
+  --coral: #c85f4b;
+  --coral-strong: #a94737;
+  --sage: #5f7f68;
+  --amber-soft: #fff0cf;
+  --red-soft: #fff1ee;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border-soft: var(--border-soft);
+  --color-coral: var(--coral);
+  --color-coral-strong: var(--coral-strong);
+  --color-sage: var(--sage);
+  --color-amber-soft: var(--amber-soft);
+  --color-red-soft: var(--red-soft);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -25,6 +41,6 @@ textarea {
 }
 
 ::selection {
-  background: #292524;
+  background: #c85f4b;
   color: #ffffff;
 }
