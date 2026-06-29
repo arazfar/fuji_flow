@@ -49,7 +49,7 @@ export function reduceAgentRun(
         },
         "gathering_context",
         "Context requested",
-        "The agent needs a few details before it can make a useful plan.",
+        "Answer the questions to continue.",
       );
     case "answers_submitted":
       return appendEvent(
@@ -61,7 +61,7 @@ export function reduceAgentRun(
         },
         "planning",
         "Planning started",
-        "The agent is turning the task and answers into a concrete plan.",
+        "Creating the plan.",
       );
     case "plan_ready":
       return appendEvent(
@@ -78,14 +78,14 @@ export function reduceAgentRun(
         },
         "awaiting_approval",
         "Approval needed",
-        "Review the plan before the agent attempts any completion step.",
+        "Review the plan.",
       );
     case "approved":
       return appendEvent(
         { ...run, status: "executing", updatedAt },
         "executing",
         "Execution approved",
-        "The agent can now attempt the approved workflow.",
+        "Running the approved step.",
       );
     case "rejected":
       return appendEvent(
@@ -110,7 +110,7 @@ export function reduceAgentRun(
         },
         "needs_user_action",
         "Plan rejected",
-        event.reason?.trim() || "The workflow stopped before execution.",
+        "Workflow stopped.",
       );
     case "completed":
       return appendEvent(
@@ -122,7 +122,7 @@ export function reduceAgentRun(
         },
         "completed",
         "Task completed",
-        event.outcome.summary,
+        "Result is ready.",
       );
     case "needs_user_action":
       return appendEvent(
@@ -134,7 +134,7 @@ export function reduceAgentRun(
         },
         "needs_user_action",
         "User action needed",
-        event.outcome.summary,
+        "Next steps are ready.",
       );
     case "failed":
       return appendEvent(

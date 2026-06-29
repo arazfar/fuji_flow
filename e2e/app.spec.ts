@@ -15,6 +15,7 @@ test("creates a task and completes the approval-gated demo flow", async ({
 
   await page.getByRole("button", { name: "Start agent" }).click();
   await expect(page.getByText("Context").last()).toBeVisible();
+  await expect(page.getByText("Context requested: Answer the questions to continue.")).toBeVisible();
 
   await page
     .getByLabel("What outcome would make this task feel done?")
@@ -25,9 +26,14 @@ test("creates a task and completes the approval-gated demo flow", async ({
   await page.getByRole("button", { name: "Submit context" }).click();
 
   await expect(page.getByText("Approval").last()).toBeVisible();
+  await expect(page.getByText("Approval needed: Review the plan.")).toBeVisible();
   await page.getByRole("button", { name: "Approve" }).click();
 
-  await expect(page.getByText("Completed").last()).toBeVisible();
+  await expect(page.getByText("Task completed: Result is ready.")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Result" })).toBeVisible();
+  await expect(
+    page.getByText('Defined the target outcome for "Draft a launch checklist".'),
+  ).toBeVisible();
 });
 
 test("surfaces next steps when execution needs user action", async ({ page }) => {
@@ -41,8 +47,11 @@ test("surfaces next steps when execution needs user action", async ({ page }) =>
     .getByLabel("What outcome would make this task feel done?")
     .fill("Know the official next step.");
   await page.getByRole("button", { name: "Submit context" }).click();
+  await expect(page.getByText("Approval needed: Review the plan.")).toBeVisible();
   await page.getByRole("button", { name: "Approve" }).click();
 
-  await expect(page.getByText("Next steps").last()).toBeVisible();
+  await expect(page.getByText("User action needed: Next steps are ready.")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Action needed" })).toBeVisible();
+  await expect(page.getByText("Open the official service page")).toBeVisible();
   await expect(page.getByRole("link", { name: "USA.gov official services directory" })).toBeVisible();
 });

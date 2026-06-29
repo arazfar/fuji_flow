@@ -621,15 +621,15 @@ function Timeline({ run }: { run: AgentRunView }) {
       <p className="text-xs font-semibold uppercase tracking-widest text-stone-500">
         Timeline
       </p>
-      <ol className="mt-3 space-y-3">
+      <ol className="mt-3 space-y-2">
         {run.timeline.map((event) => (
-          <li key={event.id} className="grid grid-cols-[auto_minmax(0,1fr)] gap-3">
-            <span className="mt-1 h-2.5 w-2.5 rounded-full bg-stone-900" />
+          <li key={event.id} className="grid grid-cols-[auto_minmax(0,1fr)] gap-2">
+            <span className="mt-1.5 h-2 w-2 rounded-full bg-stone-400" />
             <span className="min-w-0">
               <span className="block text-sm font-medium text-stone-900">
                 {event.title}
               </span>
-              <span className="block text-sm leading-6 text-stone-600">
+              <span className="block text-xs leading-5 text-stone-500">
                 {event.body}
               </span>
             </span>
@@ -670,6 +670,8 @@ function AgentPanel({
     );
   }
 
+  const hasOutcome = Boolean(run.outcome);
+
   return (
     <div className="flex h-full min-h-0 flex-col bg-stone-50">
       <div className="border-b border-stone-200 bg-white px-5 py-4">
@@ -687,6 +689,10 @@ function AgentPanel({
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto p-5">
+        <LatestUpdate run={run} />
+
+        {run.outcome ? <OutcomePanel outcome={run.outcome} /> : null}
+
         {run.status === "gathering_context" ? (
           <ContextForm
             questions={run.contextQuestions}
@@ -704,10 +710,9 @@ function AgentPanel({
             busyAction={busyAction}
             approveRun={approveRun}
             rejectRun={rejectRun}
+            supporting={hasOutcome}
           />
         ) : null}
-
-        {run.outcome ? <OutcomePanel outcome={run.outcome} /> : null}
 
         {run.error ? (
           <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
@@ -722,6 +727,27 @@ function AgentPanel({
           </div>
         ) : null}
       </div>
+    </div>
+  );
+}
+
+function LatestUpdate({ run }: { run: AgentRunView }) {
+  const latestEvent = run.timeline.at(-1);
+  const updateText = latestEvent
+    ? `${latestEvent.title}: ${latestEvent.body}`
+    : "Ready to start.";
+
+  return (
+    <div className="mb-5 rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-stone-500">
+          Latest update
+        </p>
+        <StatusPill status={run.status} />
+      </div>
+      <p className="mt-2 text-sm font-medium leading-6 text-stone-900">
+        {updateText}
+      </p>
     </div>
   );
 }
@@ -796,11 +822,13 @@ function PlanPanel({
   busyAction,
   approveRun,
   rejectRun,
+  supporting = false,
 }: {
   run: AgentRunView;
   busyAction?: string;
   approveRun: (run: AgentRunView) => Promise<void>;
   rejectRun: (run: AgentRunView) => Promise<void>;
+  supporting?: boolean;
 }) {
   if (!run.plan) return null;
 
@@ -809,6 +837,11 @@ function PlanPanel({
       <div className="flex items-start justify-between gap-4">
         <div>
           <h3 className="text-sm font-semibold text-stone-950">Plan</h3>
+          {supporting ? (
+            <p className="mt-1 text-xs font-medium uppercase tracking-widest text-stone-500">
+              Supporting context
+            </p>
+          ) : null}
           <p className="mt-1 text-sm leading-6 text-stone-600">{run.plan.summary}</p>
         </div>
         <span className="rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-xs font-medium text-stone-700">
@@ -879,7 +912,7 @@ function PlanPanel({
 
 function OutcomePanel({ outcome }: { outcome: TaskOutcome }) {
   return (
-    <div className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
+    <div className="mb-5 rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
       <div className="flex items-start gap-3">
         {outcome.status === "completed" ? (
           <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-600" aria-hidden="true" />
@@ -888,7 +921,7 @@ function OutcomePanel({ outcome }: { outcome: TaskOutcome }) {
         )}
         <div>
           <h3 className="text-sm font-semibold text-stone-950">
-            {outcome.status === "completed" ? "Completed" : "Next steps"}
+            {outcome.status === "completed" ? "Result" : "Action needed"}
           </h3>
           <p className="mt-1 text-sm leading-6 text-stone-600">{outcome.summary}</p>
         </div>
