@@ -84,7 +84,7 @@ export const workflowEventSchema = z.object({
 export const agentRunViewSchema = z.object({
   id: z.string().min(1),
   task: taskSnapshotSchema,
-  mode: z.enum(["demo", "live"]),
+  mode: z.literal("live"),
   workflowKind: z.enum(["todo", "provider_lookup"]),
   status: z.enum(agentRunStatuses),
   createdAt: z.string(),
