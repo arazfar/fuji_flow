@@ -41,9 +41,7 @@ export function createRun(
         body:
           workflowKind === "provider_lookup"
             ? "Provider lookup is ready to gather search details."
-            : mode === "live"
-            ? "OpenAI Agents SDK is configured for this run."
-            : "Demo mode is active because OPENAI_API_KEY is not configured.",
+            : "OpenAI Agents SDK is configured for this run.",
         timestamp,
       },
     ],

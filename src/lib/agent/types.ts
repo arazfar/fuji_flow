@@ -11,7 +11,7 @@ export const agentRunStatuses = [
 
 export type AgentRunStatus = (typeof agentRunStatuses)[number];
 
-export type AdapterMode = "demo" | "live";
+export type AdapterMode = "live";
 
 export type AgentWorkflowKind = "todo" | "provider_lookup";
 
