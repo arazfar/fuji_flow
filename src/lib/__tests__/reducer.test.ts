@@ -83,7 +83,7 @@ function makeRun(): AgentRunRecord {
       taskId: "task-1",
       title: "Test task",
     },
-    mode: "demo",
+    mode: "live",
     workflowKind: "todo",
     status: "idle",
     createdAt: timestamp,

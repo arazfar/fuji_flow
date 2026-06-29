@@ -75,6 +75,7 @@ const starterTodos: Todo[] = starterTasks.map((task, index) => ({
   completed: false,
   createdAt: "2026-01-01T00:00:00.000Z",
   updatedAt: "2026-01-01T00:00:00.000Z",
+  questions: [],
 }));
 
 const statusCopy: Record<
@@ -494,9 +495,7 @@ export function TodoApp() {
                       <span className="rounded-full border border-[#ead8c8] bg-[#fff8f1] px-3 py-1 text-xs font-medium text-[#6f5a4d]">
                         {selectedRun.workflowKind === "provider_lookup"
                           ? "Provider lookup"
-                          : selectedRun.mode === "live"
-                          ? "OpenAI SDK"
-                          : "Demo"} mode
+                          : "OpenAI SDK"}
                       </span>
                     ) : null}
                     {selectedTodo.completed ? (

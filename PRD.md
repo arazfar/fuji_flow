@@ -4,7 +4,7 @@
 
 Build a working MVP of a smart todo list where tasks accumulate during the week, the system builds a backlog of sharpening questions, and the user can spend a chosen amount of time answering high-impact questions to improve planning and delegation recommendations.
 
-The next 30 minutes should produce a real, usable prototype with minimal mocked data. The app should persist user-created tasks and generated question metadata locally or in a real database. AI calls can be wired behind a single service boundary so the app can use live OpenAI APIs when configured, with deterministic fallback only for development.
+The next 30 minutes should produce a real, usable prototype with minimal mocked data. The app should persist user-created tasks and generated question metadata locally or in a real database. AI calls should be wired behind a single service boundary and require live OpenAI APIs when configured for use. Automated tests may mock that boundary, but the product should not silently fall back to deterministic AI behavior.
 
 ## Prototype Brief Update
 
@@ -321,10 +321,8 @@ type TimeSlot = {
 ### Next 10 Minutes
 
 - Add task analysis service.
-- Wire OpenAI when `OPENAI_API_KEY` exists.
-- Add deterministic fallback for missing key:
-  - infer obvious categories from keywords
-  - generate 1-2 useful questions
+- Require `OPENAI_API_KEY` for task analysis.
+- Return a clear configuration error when the key is missing.
 - Save generated questions to backlog.
 
 ### Final 10 Minutes

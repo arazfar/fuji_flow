@@ -3,14 +3,90 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { POST } from "@/app/api/agent/route";
 import { clearRunsForTests } from "../agent/store";
 
+vi.mock("../agent/openai-adapter", () => ({
+  OpenAIAgentsAdapter: class {
+    readonly mode = "live" as const;
+
+    async generateContextQuestions() {
+      return [
+        {
+          id: "goal",
+          label: "What outcome would make this task feel done?",
+          required: true,
+          type: "long" as const,
+        },
+        {
+          id: "constraints",
+          label: "Any constraints?",
+          required: false,
+          type: "long" as const,
+        },
+      ];
+    }
+
+    async createPlan() {
+      return {
+        summary: "Create a concise plan.",
+        feasibility: "can_complete" as const,
+        estimatedEffort: "2 minutes",
+        requiresCurrentInfo: false,
+        riskLevel: "low" as const,
+        approvalPrompt: "Approve completion",
+        steps: [
+          {
+            id: "one",
+            title: "Clarify",
+            detail: "Clarify the outcome.",
+            owner: "agent" as const,
+          },
+          {
+            id: "two",
+            title: "Prepare",
+            detail: "Prepare the result.",
+            owner: "agent" as const,
+          },
+        ],
+      };
+    }
+
+    async executeApprovedPlan() {
+      return {
+        outcome: {
+          status: "completed" as const,
+          summary: "Completed after approval.",
+          completedActions: ["Prepared the approved result."],
+          nextSteps: [],
+          citations: [],
+        },
+      };
+    }
+  },
+}));
+
 describe("agent API route", () => {
   afterEach(() => {
     vi.unstubAllEnvs();
     clearRunsForTests();
   });
 
-  it("runs the demo start, context, and approval flow without an API key", async () => {
+  it("requires an OpenAI API key", async () => {
     vi.stubEnv("OPENAI_API_KEY", "");
+
+    const response = await post({
+      action: "start",
+      task: {
+        taskId: "task-1",
+        title: "Draft a project brief",
+      },
+    });
+    const payload = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(payload.error).toContain("OPENAI_API_KEY is required");
+  });
+
+  it("runs the OpenAI start, context, and approval flow", async () => {
+    vi.stubEnv("OPENAI_API_KEY", "test-key");
 
     const start = await post({
       action: "start",
@@ -22,7 +98,7 @@ describe("agent API route", () => {
     expect(start.status).toBe(200);
     const startPayload = await start.json();
 
-    expect(startPayload.run.mode).toBe("demo");
+    expect(startPayload.run.mode).toBe("live");
     expect(startPayload.run.status).toBe("gathering_context");
 
     const answered = await post({

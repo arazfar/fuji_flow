@@ -14,10 +14,8 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## OpenAI Agents SDK
 
-- If `OPENAI_API_KEY` is set, the server uses `@openai/agents`.
-- If `OPENAI_API_KEY` is empty, the app uses a deterministic demo adapter.
+- `OPENAI_API_KEY` is required for agent workflows and task understanding.
 - Set `OPENAI_MODEL` only when you want to override the SDK default model.
-- Set `FUJI_FLOW_AGENT_MODE=demo` to force deterministic mode for local QA.
 
 The live adapter uses structured Zod outputs, hosted web search for current details, and an approval-gated function tool before recording task completion.
 

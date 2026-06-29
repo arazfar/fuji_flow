@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { sharpenQuestionSchema, taskMetadataSchema } from "./task-intelligence";
+
 export const TODO_STORAGE_KEY = "fuji-flow.todos.v1";
 
 export const todoSchema = z.object({
@@ -10,6 +12,9 @@ export const todoSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
   agentRunId: z.string().optional(),
+  taskPatch: taskMetadataSchema.optional(),
+  questions: z.array(sharpenQuestionSchema).default([]),
+  analysisError: z.string().optional(),
 });
 
 export const todoListSchema = z.array(todoSchema);
@@ -31,6 +36,7 @@ export function createTodo(draft: TodoDraft): Todo {
     completed: false,
     createdAt: timestamp,
     updatedAt: timestamp,
+    questions: [],
   };
 }
 
@@ -61,7 +67,18 @@ export function upsertTodo(todos: Todo[], todo: Todo): Todo[] {
 export function updateTodo(
   todos: Todo[],
   id: string,
-  update: Partial<Pick<Todo, "title" | "notes" | "completed" | "agentRunId">>,
+  update: Partial<
+    Pick<
+      Todo,
+      | "title"
+      | "notes"
+      | "completed"
+      | "agentRunId"
+      | "taskPatch"
+      | "questions"
+      | "analysisError"
+    >
+  >,
 ): Todo[] {
   return todos.map((todo) =>
     todo.id === id

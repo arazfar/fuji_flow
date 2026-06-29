@@ -43,7 +43,7 @@ Use small, reviewable commits. Good commit groups:
 - `chore: reset local storage namespace`
 - `feat: implement plan day shell`
 - `feat: improve recommendation summaries`
-- `feat: add task analysis fallback`
+- `feat: add OpenAI task understanding`
 - `fix: preserve location context in task extraction`
 - `docs: add product requirements`
 
@@ -53,7 +53,7 @@ Do not mix unrelated UI, backend, docs, and merge-conflict cleanup in one commit
 
 1. Ensure task capture is fast and persists after refresh.
 2. Ensure each task receives structured metadata from OpenAI when configured.
-3. Keep deterministic local fallback for missing `OPENAI_API_KEY`.
+3. Require `OPENAI_API_KEY` for AI task understanding and agent workflows; use test mocks only for automated coverage.
 4. Generate useful sharpening questions for each task.
 5. Rank questions using PRD factors:
    - expected value

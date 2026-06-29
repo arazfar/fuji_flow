@@ -1,4 +1,3 @@
-import { DemoAgentsAdapter } from "./demo-adapter";
 import { OpenAIAgentsAdapter } from "./openai-adapter";
 import { ProviderLookupAdapter } from "./provider-lookup-adapter";
 import { reduceAgentRun } from "./reducer";
@@ -35,36 +34,22 @@ type AgentAdapter = {
 };
 
 function getAdapter(): AgentAdapter {
-  return process.env.FUJI_FLOW_AGENT_MODE === "demo" || !process.env.OPENAI_API_KEY
-    ? new DemoAgentsAdapter()
-    : new OpenAIAgentsAdapter();
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("OPENAI_API_KEY is required to run Fuji Flow agents.");
+  }
+  return new OpenAIAgentsAdapter();
 }
 
 function getAdapterForWorkflow(workflowKind: AgentWorkflowKind): AgentAdapter {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("OPENAI_API_KEY is required to run Fuji Flow agents.");
+  }
+
   if (workflowKind === "provider_lookup") {
-    return new ProviderLookupAdapter(getMode());
+    return new ProviderLookupAdapter("live");
   }
 
   return getAdapter();
-}
-
-function getMode(): AdapterMode {
-  return process.env.FUJI_FLOW_AGENT_MODE === "demo" || !process.env.OPENAI_API_KEY
-    ? "demo"
-    : "live";
-}
-
-function getLiveOrDemoAdapter(
-  mode: AdapterMode,
-  workflowKind: AgentWorkflowKind,
-): AgentAdapter {
-  if (workflowKind === "provider_lookup") {
-    return new ProviderLookupAdapter(mode);
-  }
-
-  return mode === "live" && process.env.FUJI_FLOW_AGENT_MODE !== "demo"
-    ? new OpenAIAgentsAdapter()
-    : new DemoAgentsAdapter();
 }
 
 export async function startAgentWorkflow(
@@ -170,7 +155,11 @@ export async function rejectAgentPlan(
 }
 
 function getAdapterForRun(run: AgentRunRecord): AgentAdapter {
-  return getLiveOrDemoAdapter(run.mode, run.workflowKind);
+  if (run.mode !== "live") {
+    throw new Error("This run was created by an unsupported adapter mode.");
+  }
+
+  return getAdapterForWorkflow(run.workflowKind);
 }
 
 function requireRun(
