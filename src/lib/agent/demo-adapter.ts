@@ -37,6 +37,7 @@ const creativeKeywords = [
 
 export class DemoAgentsAdapter {
   readonly mode = "demo" as const;
+  readonly workflowKind = "todo" as const;
 
   async generateContextQuestions(
     task: AgentRunRecord["task"],

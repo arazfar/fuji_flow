@@ -13,6 +13,8 @@ export type AgentRunStatus = (typeof agentRunStatuses)[number];
 
 export type AdapterMode = "demo" | "live";
 
+export type AgentWorkflowKind = "todo" | "provider_lookup";
+
 export type TaskSnapshot = {
   taskId: string;
   title: string;
@@ -89,6 +91,7 @@ export type AgentRunView = {
   id: string;
   task: TaskSnapshot;
   mode: AdapterMode;
+  workflowKind: AgentWorkflowKind;
   status: AgentRunStatus;
   createdAt: string;
   updatedAt: string;

@@ -68,6 +68,7 @@ export const contextAnswersSchema = z.record(
 export const startAgentCommandSchema = z.object({
   action: z.literal("start"),
   task: taskSnapshotSchema,
+  workflowKind: z.enum(["todo", "provider_lookup"]).optional(),
 });
 
 export const answerContextCommandSchema = z.object({

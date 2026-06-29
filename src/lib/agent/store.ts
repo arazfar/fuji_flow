@@ -1,4 +1,9 @@
-import type { AgentRunRecord, AgentRunView, TaskSnapshot } from "./types";
+import type {
+  AgentRunRecord,
+  AgentRunView,
+  AgentWorkflowKind,
+  TaskSnapshot,
+} from "./types";
 
 const STORE_KEY = "__fujiFlowAgentRuns";
 
@@ -12,12 +17,17 @@ function store(): Map<string, AgentRunRecord> {
   return target[STORE_KEY];
 }
 
-export function createRun(task: TaskSnapshot, mode: AgentRunRecord["mode"]) {
+export function createRun(
+  task: TaskSnapshot,
+  mode: AgentRunRecord["mode"],
+  workflowKind: AgentWorkflowKind = "todo",
+) {
   const timestamp = new Date().toISOString();
   const run: AgentRunRecord = {
     id: crypto.randomUUID(),
     task,
     mode,
+    workflowKind,
     status: "idle",
     createdAt: timestamp,
     updatedAt: timestamp,
@@ -29,7 +39,9 @@ export function createRun(task: TaskSnapshot, mode: AgentRunRecord["mode"]) {
         status: "idle",
         title: "Agent ready",
         body:
-          mode === "live"
+          workflowKind === "provider_lookup"
+            ? "Provider lookup is ready to gather search details."
+            : mode === "live"
             ? "OpenAI Agents SDK is configured for this run."
             : "Demo mode is active because OPENAI_API_KEY is not configured.",
         timestamp,
@@ -59,6 +71,7 @@ export function toRunView(run: AgentRunRecord): AgentRunView {
     id: run.id,
     task: run.task,
     mode: run.mode,
+    workflowKind: run.workflowKind,
     status: run.status,
     createdAt: run.createdAt,
     updatedAt: run.updatedAt,

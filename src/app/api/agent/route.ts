@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     switch (command.action) {
       case "start":
         return Response.json({
-          run: await startAgentWorkflow(command.task),
+          run: await startAgentWorkflow(command.task, command.workflowKind),
         });
       case "answer_context":
         return Response.json({

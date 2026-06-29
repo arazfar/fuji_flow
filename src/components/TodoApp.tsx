@@ -15,6 +15,7 @@ import {
   Plus,
   ShieldCheck,
   Sparkles,
+  Stethoscope,
   Trash2,
   X,
 } from "lucide-react";
@@ -26,6 +27,7 @@ import type {
   ContextQuestion,
   TaskOutcome,
 } from "@/lib/agent/types";
+import { isProviderLookupTask } from "@/lib/provider-lookup/intent";
 import {
   TODO_STORAGE_KEY,
   createTodo,
@@ -37,7 +39,11 @@ import {
 } from "@/lib/todos";
 
 type AgentCommand =
-  | { action: "start"; task: { taskId: string; title: string; notes?: string } }
+  | {
+      action: "start";
+      workflowKind?: "todo" | "provider_lookup";
+      task: { taskId: string; title: string; notes?: string };
+    }
   | { action: "answer_context"; runId: string; answers: Record<string, string> }
   | { action: "approve"; runId: string }
   | { action: "reject"; runId: string; reason?: string };
@@ -220,9 +226,10 @@ export function TodoApp() {
     }
   }
 
-  async function launchAgent(todo: Todo) {
+  async function launchAgent(todo: Todo, workflowKind: "todo" | "provider_lookup" = "todo") {
     const run = await sendAgentCommand({
       action: "start",
+      workflowKind,
       task: {
         taskId: todo.id,
         title: todo.title,
@@ -450,7 +457,11 @@ export function TodoApp() {
                     )}
                     {selectedRun ? (
                       <span className="rounded-full border border-stone-200 bg-stone-50 px-3 py-1 text-xs font-medium text-stone-600">
-                        {selectedRun.mode === "live" ? "OpenAI SDK" : "Demo"} mode
+                        {selectedRun.workflowKind === "provider_lookup"
+                          ? "Provider lookup"
+                          : selectedRun.mode === "live"
+                          ? "OpenAI SDK"
+                          : "Demo"} mode
                       </span>
                     ) : null}
                     {selectedTodo.completed ? (
@@ -462,19 +473,36 @@ export function TodoApp() {
 
                   <div className="mt-6">
                     {!selectedRun ? (
-                      <button
-                        type="button"
-                        onClick={() => launchAgent(selectedTodo)}
-                        disabled={busyAction === "start"}
-                        className="inline-flex h-11 items-center gap-2 rounded-md bg-stone-950 px-4 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-wait disabled:bg-stone-400"
-                      >
-                        {busyAction === "start" ? (
-                          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                        ) : (
-                          <Sparkles className="h-4 w-4" aria-hidden="true" />
-                        )}
-                        Start agent
-                      </button>
+                      <div className="flex flex-wrap gap-2">
+                        {isProviderLookupTask(selectedTodo.title, selectedTodo.notes) ? (
+                          <button
+                            type="button"
+                            onClick={() => launchAgent(selectedTodo, "provider_lookup")}
+                            disabled={busyAction === "start"}
+                            className="inline-flex h-11 items-center gap-2 rounded-md bg-teal-700 px-4 text-sm font-medium text-white transition hover:bg-teal-800 disabled:cursor-wait disabled:bg-stone-400"
+                          >
+                            {busyAction === "start" ? (
+                              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                            ) : (
+                              <Stethoscope className="h-4 w-4" aria-hidden="true" />
+                            )}
+                            Find provider
+                          </button>
+                        ) : null}
+                        <button
+                          type="button"
+                          onClick={() => launchAgent(selectedTodo)}
+                          disabled={busyAction === "start"}
+                          className="inline-flex h-11 items-center gap-2 rounded-md bg-stone-950 px-4 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-wait disabled:bg-stone-400"
+                        >
+                          {busyAction === "start" ? (
+                            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                          ) : (
+                            <Sparkles className="h-4 w-4" aria-hidden="true" />
+                          )}
+                          Start agent
+                        </button>
+                      </div>
                     ) : (
                       <Timeline run={selectedRun} />
                     )}

@@ -53,6 +53,7 @@ const completionToolSchema = z.object({
 
 export class OpenAIAgentsAdapter {
   readonly mode = "live" as const;
+  readonly workflowKind = "todo" as const;
 
   async generateContextQuestions(
     task: AgentRunRecord["task"],

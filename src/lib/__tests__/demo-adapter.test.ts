@@ -57,6 +57,7 @@ function makeRun(title: string): AgentRunRecord {
       title,
     },
     mode: "demo",
+    workflowKind: "todo",
     status: "idle",
     createdAt: timestamp,
     updatedAt: timestamp,

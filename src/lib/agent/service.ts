@@ -1,5 +1,6 @@
 import { DemoAgentsAdapter } from "./demo-adapter";
 import { OpenAIAgentsAdapter } from "./openai-adapter";
+import { ProviderLookupAdapter } from "./provider-lookup-adapter";
 import { reduceAgentRun } from "./reducer";
 import { createRun, getRun, saveRun, toRunView } from "./store";
 import type {
@@ -7,6 +8,7 @@ import type {
   AdapterMode,
   AgentRunRecord,
   AgentRunView,
+  AgentWorkflowKind,
   ApprovalRequest,
   ContextQuestion,
   TaskOutcome,
@@ -21,6 +23,7 @@ type ExecutionResult = {
 
 type AgentAdapter = {
   readonly mode: AdapterMode;
+  readonly workflowKind: AgentWorkflowKind;
   generateContextQuestions(
     task: AgentRunRecord["task"],
   ): Promise<ContextQuestion[]>;
@@ -37,7 +40,28 @@ function getAdapter(): AgentAdapter {
     : new OpenAIAgentsAdapter();
 }
 
-function getLiveOrDemoAdapter(mode: AdapterMode): AgentAdapter {
+function getAdapterForWorkflow(workflowKind: AgentWorkflowKind): AgentAdapter {
+  if (workflowKind === "provider_lookup") {
+    return new ProviderLookupAdapter(getMode());
+  }
+
+  return getAdapter();
+}
+
+function getMode(): AdapterMode {
+  return process.env.FUJI_FLOW_AGENT_MODE === "demo" || !process.env.OPENAI_API_KEY
+    ? "demo"
+    : "live";
+}
+
+function getLiveOrDemoAdapter(
+  mode: AdapterMode,
+  workflowKind: AgentWorkflowKind,
+): AgentAdapter {
+  if (workflowKind === "provider_lookup") {
+    return new ProviderLookupAdapter(mode);
+  }
+
   return mode === "live" && process.env.FUJI_FLOW_AGENT_MODE !== "demo"
     ? new OpenAIAgentsAdapter()
     : new DemoAgentsAdapter();
@@ -45,9 +69,10 @@ function getLiveOrDemoAdapter(mode: AdapterMode): AgentAdapter {
 
 export async function startAgentWorkflow(
   task: TaskSnapshot,
+  workflowKind: AgentWorkflowKind = "todo",
 ): Promise<AgentRunView> {
-  const adapter = getAdapter();
-  const run = createRun(task, adapter.mode);
+  const adapter = getAdapterForWorkflow(workflowKind);
+  const run = createRun(task, adapter.mode, adapter.workflowKind);
 
   try {
     const questions = await adapter.generateContextQuestions(run.task);
@@ -140,7 +165,7 @@ export async function rejectAgentPlan(
 }
 
 function getAdapterForRun(run: AgentRunRecord): AgentAdapter {
-  return getLiveOrDemoAdapter(run.mode);
+  return getLiveOrDemoAdapter(run.mode, run.workflowKind);
 }
 
 function requireRun(runId: string): AgentRunRecord {
