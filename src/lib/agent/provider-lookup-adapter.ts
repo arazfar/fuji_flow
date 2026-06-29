@@ -35,7 +35,7 @@ const providerRecommendationSchema = z.object({
   acceptingNewPatients: z.string().min(1),
   rating: z.number(),
   reviewCount: z.number(),
-  sourceUrls: z.array(z.string().url()),
+  sourceUrls: z.array(z.string()),
   reasons: z.array(z.string().min(1)),
   cautions: z.array(z.string().min(1)),
 });

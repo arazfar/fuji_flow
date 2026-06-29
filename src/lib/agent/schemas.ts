@@ -34,13 +34,13 @@ export const actionPlanSchema = z.object({
 
 export const citationSchema = z.object({
   title: z.string().min(1),
-  url: z.string().url(),
+  url: z.string().min(1),
 });
 
 export const nextStepSchema = z.object({
   title: z.string().min(1),
   detail: z.string().min(1),
-  link: z.string().url().optional(),
+  link: z.string().min(1).optional(),
   phone: z.string().optional(),
   deadline: z.string().optional(),
   materials: z.array(z.string().min(1)).optional(),

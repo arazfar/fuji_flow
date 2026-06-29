@@ -80,6 +80,10 @@ const starterTodos: Todo[] = starterTasks.map((task, index) => ({
   questions: [],
 }));
 
+const providerRecommendationStart = "[Recommended provider]";
+const providerRecommendationEnd = "[/Recommended provider]";
+const maxTodoNotesLength = 1200;
+
 const statusCopy: Record<
   AgentRunStatus,
   { label: string; className: string; icon: typeof Clock3 }
@@ -336,6 +340,10 @@ export function TodoApp() {
         );
       }
 
+      if (payload.run.workflowKind === "provider_lookup" && payload.run.outcome) {
+        addProviderRecommendationToTodo(payload.run);
+      }
+
       return payload.run;
     } catch (caught) {
       const message = caught instanceof Error ? caught.message : "Agent request failed.";
@@ -349,6 +357,21 @@ export function TodoApp() {
     } finally {
       setBusyAction(undefined);
     }
+  }
+
+  function addProviderRecommendationToTodo(run: AgentRunView) {
+    const recommendation = formatProviderRecommendation(run.outcome);
+    if (!recommendation) return;
+
+    setTodos((current) =>
+      current.map((todo) => {
+        if (todo.id !== run.task.taskId) return todo;
+
+        return updateTodo([todo], todo.id, {
+          notes: mergeProviderRecommendation(todo.notes, recommendation),
+        })[0];
+      }),
+    );
   }
 
   function clearStaleRun(runId: string) {
@@ -764,6 +787,57 @@ function StatusPill({ status }: { status: AgentRunStatus }) {
       {meta.label}
     </span>
   );
+}
+
+function formatProviderRecommendation(outcome?: TaskOutcome): string | undefined {
+  const provider = outcome?.nextSteps.find(
+    (step) => step.phone || step.link || step.title !== "Call script checklist",
+  );
+  if (!provider) return undefined;
+
+  const lines = [
+    providerRecommendationStart,
+    provider.title,
+    provider.phone ? `Phone: ${provider.phone}` : undefined,
+    provider.link ? `Link: ${provider.link}` : undefined,
+    provider.deadline ? `Availability: ${provider.deadline}` : undefined,
+    provider.detail ? `Details: ${truncateText(provider.detail, 520)}` : undefined,
+    providerRecommendationEnd,
+  ].filter((line): line is string => Boolean(line));
+
+  return lines.join("\n");
+}
+
+function mergeProviderRecommendation(
+  existingNotes: string | undefined,
+  recommendation: string,
+): string {
+  const cleaned = (existingNotes ?? "")
+    .replace(
+      new RegExp(
+        `\\n*${escapeRegExp(providerRecommendationStart)}[\\s\\S]*?${escapeRegExp(providerRecommendationEnd)}\\n*`,
+        "g",
+      ),
+      "\n",
+    )
+    .trim();
+  const safeRecommendation = truncateText(recommendation, maxTodoNotesLength);
+  const next = [cleaned, safeRecommendation].filter(Boolean).join("\n\n");
+
+  if (next.length <= maxTodoNotesLength) return next;
+
+  const available = Math.max(0, maxTodoNotesLength - safeRecommendation.length - 2);
+  const trimmedExisting = cleaned.slice(0, available).trim();
+  return [trimmedExisting, safeRecommendation].filter(Boolean).join("\n\n");
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function truncateText(value: string, maxLength: number): string {
+  if (value.length <= maxLength) return value;
+  return `${value.slice(0, Math.max(0, maxLength - 3)).trim()}...`;
 }
 
 function Timeline({ run }: { run: AgentRunView }) {
