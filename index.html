@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Clarity Queue</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace" aria-label="AI todo prototype">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Agentic todo prototype</p>
+            <h1>Clarity Queue</h1>
+          </div>
+          <div class="signal-strip" aria-label="System summary">
+            <span id="taskCount">0 tasks</span>
+            <span id="questionCount">0 questions</span>
+            <span id="approvalCount">0 approvals</span>
+          </div>
+        </header>
+
+        <section class="capture-band" aria-label="Task capture">
+          <form id="taskForm" class="task-form">
+            <label for="taskInput">Add a task</label>
+            <div class="capture-row">
+              <input
+                id="taskInput"
+                type="text"
+                autocomplete="off"
+                placeholder="Type a task and press Enter"
+              />
+              <button type="submit">Add</button>
+            </div>
+          </form>
+          <div class="quick-actions">
+            <button id="voiceDumpButton" type="button">Voice dump</button>
+            <button id="sharpenTwoButton" type="button">Sharpen 2 min</button>
+            <button id="sharpenFiveButton" type="button">Sharpen 5 min</button>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <section class="panel task-panel" aria-label="Task list">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Inbox</p>
+                <h2>Accumulated tasks</h2>
+              </div>
+              <button id="seedButton" type="button" class="ghost-button">Use sample set</button>
+            </div>
+            <div id="taskList" class="task-list"></div>
+          </section>
+
+          <section class="panel agent-panel" aria-label="Agent workflow">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Workflow</p>
+                <h2>Agent run</h2>
+              </div>
+              <span id="activeTaskLabel" class="status-pill neutral">No task selected</span>
+            </div>
+
+            <div class="agent-states" aria-label="Agent states">
+              <span data-state="context" class="state-chip">Context</span>
+              <span data-state="plan" class="state-chip">Plan</span>
+              <span data-state="approval" class="state-chip">Approval</span>
+              <span data-state="execute" class="state-chip">Execute</span>
+              <span data-state="handoff" class="state-chip">Next steps</span>
+            </div>
+
+            <div id="agentRun" class="agent-run empty-state">
+              Select a task to launch an agent workflow.
+            </div>
+          </section>
+        </section>
+
+        <section class="bottom-grid">
+          <section class="panel" aria-label="Recommendations">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Delegation</p>
+                <h2>Recommendations</h2>
+              </div>
+            </div>
+            <div id="recommendations" class="recommendation-grid"></div>
+          </section>
+
+          <section class="panel" aria-label="Habit learning">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Timing</p>
+                <h2>Habit-aware prompts</h2>
+              </div>
+            </div>
+            <div id="habitPanel" class="habit-panel"></div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="voiceDialog" class="dialog">
+      <form method="dialog" class="dialog-inner">
+        <div>
+          <p class="eyebrow">Capture</p>
+          <h2>Freestyle task dump</h2>
+        </div>
+        <textarea
+          id="voiceText"
+          rows="7"
+          placeholder="Paste or speak a rough list: return shoes, call dentist, buy snacks for recital..."
+        ></textarea>
+        <div class="dialog-actions">
+          <button id="speechButton" type="button" class="ghost-button">Start speech</button>
+          <button value="cancel" type="submit" class="ghost-button">Cancel</button>
+          <button id="voiceSaveButton" value="save" type="submit">Split into tasks</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="sharpenDialog" class="dialog">
+      <div class="dialog-inner">
+        <div class="session-header">
+          <div>
+            <p class="eyebrow">Sharpen session</p>
+            <h2 id="sharpenTitle">2 minutes</h2>
+          </div>
+          <span id="sharpenProgress" class="status-pill neutral">0 left</span>
+        </div>
+        <div id="questionCard" class="question-card"></div>
+        <div class="dialog-actions">
+          <button id="endSharpenButton" type="button" class="ghost-button">End session</button>
+        </div>
+      </div>
+    </dialog>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
