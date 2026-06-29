@@ -37,6 +37,7 @@ describe("provider lookup workflow", () => {
     });
 
     expect(plan.feasibility).toBe("needs_user_action");
+    expect(plan.steps[0].detail).toContain("live web search");
     expect(result.outcome.status).toBe("needs_user_action");
     expect(result.outcome.nextSteps[0].phone).toEqual(expect.any(String));
   });

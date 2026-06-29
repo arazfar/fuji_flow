@@ -47,6 +47,35 @@ describe("agent API route", () => {
     expect(approvedPayload.run.outcome.status).toBe("completed");
   });
 
+  it("continues a run from the client snapshot if server memory is empty", async () => {
+    vi.stubEnv("OPENAI_API_KEY", "");
+
+    const start = await post({
+      action: "start",
+      task: {
+        taskId: "task-1",
+        title: "Draft a project brief",
+      },
+    });
+    const startPayload = await start.json();
+
+    clearRunsForTests();
+
+    const answered = await post({
+      action: "answer_context",
+      runId: startPayload.run.id,
+      run: startPayload.run,
+      answers: {
+        goal: "A concise brief",
+        constraints: "Plain English",
+      },
+    });
+    const answeredPayload = await answered.json();
+
+    expect(answered.status).toBe(200);
+    expect(answeredPayload.run.status).toBe("awaiting_approval");
+  });
+
   it("rejects invalid commands", async () => {
     const response = await post({ action: "missing" });
     const payload = await response.json();

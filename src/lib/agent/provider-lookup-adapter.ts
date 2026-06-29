@@ -1,3 +1,6 @@
+import { Agent, run, webSearchTool, type NonStreamRunOptions } from "@openai/agents";
+import { z } from "zod";
+
 import { lookupProviders } from "@/lib/provider-lookup/search";
 import type {
   LookupSource,
@@ -14,6 +17,42 @@ import type {
   ContextQuestion,
   TaskOutcome,
 } from "./types";
+
+const webSearchRunOptions = {
+  maxTurns: 6,
+} satisfies NonStreamRunOptions;
+
+const providerRecommendationSchema = z.object({
+  name: z.string().min(1),
+  kind: z.enum(["doctor", "dentist"]),
+  specialty: z.string().min(1),
+  address: z.string().min(1),
+  phone: z.string().min(1),
+  website: z.string(),
+  distanceMiles: z.number(),
+  nextAvailable: z.string().min(1),
+  acceptsInsurance: z.string().min(1),
+  acceptingNewPatients: z.string().min(1),
+  rating: z.number(),
+  reviewCount: z.number(),
+  sourceUrls: z.array(z.string().url()),
+  reasons: z.array(z.string().min(1)),
+  cautions: z.array(z.string().min(1)),
+});
+
+const providerLookupOutputSchema = z.object({
+  summary: z.string().min(1),
+  lookupSource: z.enum(["google_maps", "web_search", "sample_directory"]),
+  recommendations: z.array(providerRecommendationSchema),
+  questionsToAskOffice: z.array(z.string().min(1)),
+  missingInformation: z.array(z.string().min(1)),
+  warnings: z.array(z.string().min(1)),
+  safetyNote: z.string().min(1),
+});
+
+function modelConfig() {
+  return process.env.OPENAI_MODEL ? { model: process.env.OPENAI_MODEL } : {};
+}
 
 export class ProviderLookupAdapter {
   readonly workflowKind = "provider_lookup" as const;
@@ -76,9 +115,9 @@ export class ProviderLookupAdapter {
   ): Promise<ActionPlan> {
     const criteria = criteriaFromRun(run, answers);
     const source =
-      criteria.lookupSource === "web_search"
-        ? "live web search"
-        : "Google Places when configured, with sample directory fallback";
+      criteria.lookupSource === "google_maps"
+        ? "Google Places when configured, with sample directory fallback"
+        : "live web search";
 
     return {
       summary: `Find ${criteria.providerKind} options for ${criteria.service} near ${criteria.location}.`,
@@ -114,7 +153,11 @@ export class ProviderLookupAdapter {
   }
 
   async executeApprovedPlan(run: AgentRunRecord): Promise<{ outcome: TaskOutcome }> {
-    const lookup = await lookupProviders(criteriaFromRun(run, run.contextAnswers));
+    const criteria = criteriaFromRun(run, run.contextAnswers);
+    const lookup =
+      criteria.lookupSource === "web_search" && this.mode === "live"
+        ? await lookupProvidersWithWebSearch(criteria)
+        : await lookupProviders(criteria);
 
     return {
       outcome: providerLookupToOutcome(lookup),
@@ -134,7 +177,7 @@ function criteriaFromRun(
     providerKind,
     service: answers.service?.trim() || defaultService(providerKind, run),
     maxDistanceMiles: distanceFromPreferences(preferences),
-    lookupSource: lookupSourceFromPreferences(preferences),
+    lookupSource: lookupSourceFromPreferences(preferences) ?? "web_search",
     insurance: optional(answers.insurance),
     acceptingNewPatientsOnly: /accepting new|new patient/i.test(preferences) || undefined,
     language: matchPreference(preferences, /(?:language|speaks?|spanish|mandarin|cantonese|korean|tagalog)[^,.]*/i),
@@ -166,6 +209,48 @@ function lookupSourceFromPreferences(preferences: string): LookupSource | undefi
   if (/web search|live search/i.test(preferences)) return "web_search";
   if (/google|maps/i.test(preferences)) return "google_maps";
   return undefined;
+}
+
+async function lookupProvidersWithWebSearch(
+  criteria: ProviderLookupRequest,
+): Promise<ProviderLookupOutput> {
+  const agent = new Agent({
+    name: "Doctor and Dentist Web Search Agent",
+    ...modelConfig(),
+    instructions: `
+You help people shortlist doctors or dentists using live web search.
+
+Use web search to find current provider options for the requested location, service, distance, and preferences. Prefer official provider websites, hospital or clinic pages, reputable directories, and listing pages with phone/address details. Do not invent phone numbers, addresses, ratings, insurance participation, accepting-new-patient status, or availability.
+
+Return structured recommendations only when you found evidence online. Put URLs you used in sourceUrls. Use "Verify with office" for nextAvailable and acceptingNewPatients unless a source clearly says otherwise. Use "Verify <plan>" for acceptsInsurance when insurance is requested unless a source specifically confirms the plan.
+
+Rank by service match, proximity to the requested location, evidence quality, practical contactability, and user preferences. Add warnings when web search cannot verify insurance, distance, availability, accepting-new-patient status, accessibility, or language.
+
+For urgent symptoms, severe pain, trouble breathing, chest pain, neurological symptoms, uncontrolled bleeding, facial swelling, or dental trauma, advise urgent care, emergency services, or the user's local emergency number instead of treating provider lookup as medical advice.
+`,
+    tools: [
+      webSearchTool({
+        searchContextSize: "medium",
+        externalWebAccess: true,
+      }),
+    ],
+    outputType: providerLookupOutputSchema,
+  });
+
+  const result = await run(
+    agent,
+    `Find provider options for this request:\n${JSON.stringify(criteria, null, 2)}`,
+    webSearchRunOptions,
+  );
+
+  if (!result.finalOutput) {
+    throw new Error("The provider web search agent did not return lookup results.");
+  }
+
+  return {
+    ...result.finalOutput,
+    lookupSource: "web_search",
+  };
 }
 
 function urgencyFromAnswer(value: string): ProviderLookupRequest["urgency"] {

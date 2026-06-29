@@ -93,8 +93,9 @@ export async function startAgentWorkflow(
 export async function answerContext(
   runId: string,
   answers: Record<string, string>,
+  fallbackRun?: AgentRunView,
 ): Promise<AgentRunView> {
-  const run = requireRun(runId);
+  const run = requireRun(runId, fallbackRun);
   const adapter = getAdapterForRun(run);
   const planning = reduceAgentRun(run, {
     type: "answers_submitted",
@@ -118,8 +119,11 @@ export async function answerContext(
   }
 }
 
-export async function approveAgentPlan(runId: string): Promise<AgentRunView> {
-  const run = requireRun(runId);
+export async function approveAgentPlan(
+  runId: string,
+  fallbackRun?: AgentRunView,
+): Promise<AgentRunView> {
+  const run = requireRun(runId, fallbackRun);
   if (run.status !== "awaiting_approval" || !run.plan) {
     throw new Error("This run is not awaiting approval.");
   }
@@ -155,8 +159,9 @@ export async function approveAgentPlan(runId: string): Promise<AgentRunView> {
 export async function rejectAgentPlan(
   runId: string,
   reason?: string,
+  fallbackRun?: AgentRunView,
 ): Promise<AgentRunView> {
-  const run = requireRun(runId);
+  const run = requireRun(runId, fallbackRun);
   const rejected = reduceAgentRun(run, {
     type: "rejected",
     reason,
@@ -168,12 +173,20 @@ function getAdapterForRun(run: AgentRunRecord): AgentAdapter {
   return getLiveOrDemoAdapter(run.mode, run.workflowKind);
 }
 
-function requireRun(runId: string): AgentRunRecord {
+function requireRun(
+  runId: string,
+  fallbackRun?: AgentRunView,
+): AgentRunRecord {
   const run = getRun(runId);
-  if (!run) {
+  if (run) {
+    return run;
+  }
+
+  if (!fallbackRun || fallbackRun.id !== runId) {
     throw new Error("Agent run not found. Start a new workflow for this task.");
   }
-  return run;
+
+  return saveRun({ ...fallbackRun });
 }
 
 function errorMessage(error: unknown): string {

@@ -44,9 +44,14 @@ type AgentCommand =
       workflowKind?: "todo" | "provider_lookup";
       task: { taskId: string; title: string; notes?: string };
     }
-  | { action: "answer_context"; runId: string; answers: Record<string, string> }
-  | { action: "approve"; runId: string }
-  | { action: "reject"; runId: string; reason?: string };
+  | {
+      action: "answer_context";
+      runId: string;
+      answers: Record<string, string>;
+      run?: AgentRunView;
+    }
+  | { action: "approve"; runId: string; run?: AgentRunView }
+  | { action: "reject"; runId: string; reason?: string; run?: AgentRunView };
 
 const starterTasks = [
   {
@@ -193,10 +198,14 @@ export function TodoApp() {
     setError(undefined);
     setBusyAction(command.action);
     try {
+      const commandWithRun =
+        "runId" in command && !command.run && runs[command.runId]
+          ? { ...command, run: runs[command.runId] }
+          : command;
       const response = await fetch("/api/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(command),
+        body: JSON.stringify(commandWithRun),
       });
       const payload = (await response.json()) as
         | { run: AgentRunView }
@@ -219,11 +228,37 @@ export function TodoApp() {
 
       return payload.run;
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Agent request failed.");
+      const message = caught instanceof Error ? caught.message : "Agent request failed.";
+      if ("runId" in command && message.includes("Agent run not found")) {
+        clearStaleRun(command.runId);
+        setError("That agent run expired after a server refresh. Start a new workflow for this task.");
+      } else {
+        setError(message);
+      }
       return undefined;
     } finally {
       setBusyAction(undefined);
     }
+  }
+
+  function clearStaleRun(runId: string) {
+    setRuns((current) => {
+      const next = { ...current };
+      delete next[runId];
+      return next;
+    });
+    setTodos((current) =>
+      current.map((todo) =>
+        todo.agentRunId === runId
+          ? { ...todo, agentRunId: undefined, updatedAt: new Date().toISOString() }
+          : todo,
+      ),
+    );
+    setAnswerDrafts((current) => {
+      const next = { ...current };
+      delete next[runId];
+      return next;
+    });
   }
 
   async function launchAgent(todo: Todo, workflowKind: "todo" | "provider_lookup" = "todo") {

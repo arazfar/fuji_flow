@@ -20,15 +20,15 @@ export async function POST(request: Request) {
         });
       case "answer_context":
         return Response.json({
-          run: await answerContext(command.runId, command.answers),
+          run: await answerContext(command.runId, command.answers, command.run),
         });
       case "approve":
         return Response.json({
-          run: await approveAgentPlan(command.runId),
+          run: await approveAgentPlan(command.runId, command.run),
         });
       case "reject":
         return Response.json({
-          run: await rejectAgentPlan(command.runId, command.reason),
+          run: await rejectAgentPlan(command.runId, command.reason, command.run),
         });
     }
   } catch (error) {
