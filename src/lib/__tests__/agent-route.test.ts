@@ -124,7 +124,7 @@ describe("agent API route", () => {
   });
 
   it("continues a run from the client snapshot if server memory is empty", async () => {
-    vi.stubEnv("OPENAI_API_KEY", "");
+    vi.stubEnv("OPENAI_API_KEY", "test-key");
 
     const start = await post({
       action: "start",

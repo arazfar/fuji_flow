@@ -12,7 +12,7 @@ describe("provider lookup workflow", () => {
   });
 
   it("creates provider-specific context and handoff results", async () => {
-    const adapter = new ProviderLookupAdapter("demo");
+    const adapter = new ProviderLookupAdapter("live");
     const run = makeRun("Find a dentist phone number");
     const questions = await adapter.generateContextQuestions(run.task);
 
@@ -22,7 +22,7 @@ describe("provider lookup workflow", () => {
       location: "San Francisco, CA",
       service: "cleaning",
       insurance: "Delta Dental",
-      preferences: "within 5 miles, accepting new patients",
+      preferences: "within 5 miles, accepting new patients, use maps",
     });
 
     const result = await adapter.executeApprovedPlan({
@@ -32,12 +32,12 @@ describe("provider lookup workflow", () => {
         location: "San Francisco, CA",
         service: "cleaning",
         insurance: "Delta Dental",
-        preferences: "within 5 miles, accepting new patients",
+        preferences: "within 5 miles, accepting new patients, use maps",
       },
     });
 
     expect(plan.feasibility).toBe("needs_user_action");
-    expect(plan.steps[0].detail).toContain("live web search");
+    expect(plan.steps[0].detail).toContain("Google Places");
     expect(result.outcome.status).toBe("needs_user_action");
     expect(result.outcome.nextSteps[0].phone).toEqual(expect.any(String));
   });
@@ -52,7 +52,7 @@ function makeRun(title: string): AgentRunRecord {
       taskId: "task-1",
       title,
     },
-    mode: "demo",
+    mode: "live",
     workflowKind: "provider_lookup",
     status: "idle",
     createdAt: timestamp,
