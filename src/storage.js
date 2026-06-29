@@ -1,4 +1,4 @@
-const STORAGE_KEY = "clarity-queue-state-v1";
+const STORAGE_KEY = "clarity-queue-state-v2";
 
 export function loadState() {
   const fallback = {
